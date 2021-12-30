@@ -1,9 +1,48 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+import { GraphQLClient, gql } from 'graphql-request'
+import { GET_ALL_BLOGS } from '../graphQL/queries'
+import graphQLClient from '../graphQL/graphQLClient'
+
+// export const getStaticProps: GetStaticProps = async (context) => {
+
+//   const endpoint = process.env.PREVIEW_EDGE_CH_ENDPOINT as string;
+
+//   const graphQLClient = new GraphQLClient(endpoint)
+//   graphQLClient.setHeader('X-GQL-Token', process.env.PREVIEW_EDGE_CH_API_KEY as string)
+
+//   const query = gql`
+//   {
+//     allM_Content_Blog {
+//       results{
+//         blog_Title
+//         blog_Body
+//       }
+//     }
+//   }
+// `
+//   const data = await graphQLClient.request(query);
+
+//   return {
+//     props: { blogContent: data.allM_Content_Blog },
+//   };
+// }
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const data = await graphQLClient.request(GET_ALL_BLOGS);
+
+  return {
+    props: {blogContent: data.allM_Content_Blog}
+  };
+}
+
+const Home: NextPage = (props: any) => {
+
+  console.log(JSON.stringify(props, undefined, 2))
+
   return (
     <div className={styles.container}>
       <Head>
@@ -14,42 +53,18 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to Experience Edge for Content Hub
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          {props?.blogContent.results.map((blog: any) => (
+            <a key={blog.blog_Title} className={styles.card}>
+              <h2>{blog.blog_Title}</h2>
+              <p>{blog.blog_Body}</p>
+            </a>
+          ))}
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
         </div>
       </main>
 
