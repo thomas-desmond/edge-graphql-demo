@@ -3,33 +3,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-import { GraphQLClient, gql } from 'graphql-request'
 import { GET_ALL_BLOGS } from '../graphQL/queries'
 import graphQLClient from '../graphQL/graphQLClient'
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-
-//   const endpoint = process.env.PREVIEW_EDGE_CH_ENDPOINT as string;
-
-//   const graphQLClient = new GraphQLClient(endpoint)
-//   graphQLClient.setHeader('X-GQL-Token', process.env.PREVIEW_EDGE_CH_API_KEY as string)
-
-//   const query = gql`
-//   {
-//     allM_Content_Blog {
-//       results{
-//         blog_Title
-//         blog_Body
-//       }
-//     }
-//   }
-// `
-//   const data = await graphQLClient.request(query);
-
-//   return {
-//     props: { blogContent: data.allM_Content_Blog },
-//   };
-// }
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const data = await graphQLClient.request(GET_ALL_BLOGS);
